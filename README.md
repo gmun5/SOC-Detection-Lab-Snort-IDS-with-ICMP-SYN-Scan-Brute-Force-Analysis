@@ -124,7 +124,7 @@ terminal showing the validation command and the success message at the bottom
 
 ### Validation
 
-I ran `sudo snort -T -c /etc/snort/snort.conf -i enp2s0` in the Ubuntu. This validates that the Snort configuration, rules, and network interface are correctly set up and ready for execution. The command prints a long validation report, and at the end of it writes "Snort successfully validated the configuration".
+I ran `sudo snort -T -c /etc/snort/snort.conf -i enp2s0` in Ubuntu. This validates that the Snort configuration, rules, and network interface are correctly set up and ready for execution. The command prints a long validation report, and at the end of it writes "Snort successfully validated the configuration".
 
 
 ## Step 6: Create Custom Snort Detection Rules
