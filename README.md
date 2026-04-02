@@ -10,7 +10,6 @@ The purpose of this project was not just to "run Snort," but to practice the wor
 - Generate suspicious activity
 - Observe alerts and packet behavior
 - Identify source/destination and protocol details
-- Document findings clearly
 
 Because the host machine was a 2022 MacBook Pro with 8 GB of RAM, the lab was intentionally kept lightweight by using only two VMs at a time.
 
@@ -20,7 +19,6 @@ The main goals of this lab were to:
 2. Configure Snort on Ubuntu to monitor live traffic
 3. Understand the difference between normal and suspicious network activity
 4. Simulate realistic SOC scenarios without resource-heavy tooling
-5. Practice documenting findings like an analyst, not just a lab user
 
 ## Environment
 ### Host System
@@ -47,3 +45,29 @@ Both virtual machines were configured to use a private host-only network in VMwa
 - VMware Fusion
 - Ubuntu Server (CLI)
 - Windows Command Prompt
+
+## Skills Demonstrated
+- IDS setup and validation
+- Network segmentation and VM isolation
+- Snort traffic inspection and alert monitoring
+- ICMP traffic analysis
+- TCP SYN reconnaissance detection
+- Repeated authentication attempt analysis
+- Traffic pattern interpretation
+
+## Step 1: Configure the Virtual Network
+
+The first requirement for this lab was isolation. In VMware Fusion, both the Ubuntu VM and the Windows VM were configured to use Private to my Mac. This creates a host-only network so the traffic remains contained inside the lab.
+
+### Reasoning
+
+If the VMs were left on NAT or bridged networking, scan traffic could mix with the real host network. That would make the lab less controlled and less professional.
+
+### Verification
+
+On Ubuntu I input the `ip a` command to identify the active network interface and assigned IP address for Snort monitoring and traffic targeting. I also used the `ip route` command to verify network routing and confirm the lab subnet configuration for proper VM-to-VM communication.
+
+The key checks were that:
+- the active interface was enp2s0
+- the VM had an address in the 172.16.14.0/24 range
+- there was no default route to the internet
