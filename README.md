@@ -1,6 +1,6 @@
 # SOC Detection Lab: Snort IDS with Brute Force, ICMP, and SYN Scan Analysis
 
-## Overview
+# Overview
 
 
 This Snort Intrusion Detection Lab was built with two isolated virtual machines: an Ubuntu VM running Snort, and a Windows VM used to generate network traffic. The lab was designed to simulate three realistic SOC-relevant scenarios: a controlled SSH brute-force simulation, a benign ICMP baseline, and a TCP SYN reconnaissance scan. 
@@ -55,6 +55,8 @@ Both virtual machines were configured to use a private host-only network in VMwa
 - TCP SYN reconnaissance detection
 - Repeated authentication attempt analysis
 - Traffic pattern interpretation
+
+# Setup
 
 
 ## Step 1: Configure the Virtual Network
@@ -213,3 +215,123 @@ terminal showing Snort running and waiting for traffic
 
 ### Execution
 To begin, I ran `sudo snort -i enp2s0 -A console -q -c /etc/snort/snort.conf`. This command starts Snort in console mode, instructing it to monitor traffic on the specified network interface, apply the configured rules and settings from the configuration file, and display any detected alerts in real time.
+
+
+# Lab Scenarios
+
+
+## Scenario 1: ICMP Echo Baseline
+
+Establish a baseline of benign network traffic before introducing suspicious activity.
+
+### Actitivy Execution
+
+To generate baseline traffic, I initiated ICMP requests from the Windows VM to the Ubuntu VM by using the `ping` command targeting the Ubuntu IP address `172.16.14.129`. This was done to simulate normal, benign network communication between hosts within the lab environment. While the ping command was running, Snort was actively monitoring traffic on the Ubuntu VM. 
+
+### Observed Behavior
+
+As a result, multiple alerts were generated in real time, indicating that ICMP traffic was being detected and matched against the custom rule defined in the `local.rules` file.
+
+The Snort console output displayed repeated alerts labeled **"ICMP Test Detected"**, along with timestamps, source IP (`172.16.14.1`), and destination IP (`172.16.14.129`). The repeated alerts confirmed that Snort was successfully capturing and analyzing live network traffic based on the configured detection rules.
+
+
+### Screenshot description
+
+12-icmp-snort-alerts.png
+
+Snort console output
+multiple “ICMP Test Detected” alerts
+showing source → destination IP
+
+### Analysis
+
+This scenario established a benign baseline by generating normal ICMP echo traffic from the Windows VM to the Ubuntu Snort sensor. The traffic pattern was expected and consistent, making it useful as a reference point for later suspicious scenarios.
+
+## Scenario 2: TCP SYN Scan (Reconnaissance)
+
+Simulate early-stage attacker reconnaissance by identifying open or responsive TCP ports without fully establishing connections.
+
+### Activity Execution
+
+To simulate reconnaissance activity, I initiated a SYN scan from the Windows VM targeting the Ubuntu Snort sensor using the following command: `nmap -sS 172.16.14.129`. This command performs a TCP SYN scan, which sends connection requests to multiple ports on the target system without completing the full TCP handshake. The purpose of this scan was to identify open or responsive ports on the Ubuntu VM, simulating early-stage attacker behavior.
+
+### Observed Behavior
+
+After executing the scan, Snort generated multiple real-time alerts indicating that SYN packets were being sent from the Windows VM to the Ubuntu VM across various destination ports.
+
+Each alert included:
+
+- Source IP: `172.16.14.128` (Windows VM)
+- Destination IP: `172.16.14.129` (Ubuntu VM)
+- Different destination ports (e.g., 80, 443, 22, etc.)
+- Alert message: **“SYN Port Scan Detected”**
+
+The high volume of alerts in a short time frame confirmed that multiple connection attempts were being made rapidly across different ports, which is consistent with port scanning behavior.
+
+### Screenshot(s) Needed
+
+13-nmap-syn-scan-command.png
+
+Windows Command Prompt showing:
+nmap -sS 172.16.14.129
+
+14-snort-syn-alerts.png
+Snort console output displaying multiple
+“SYN Port Scan Detected” alerts
+
+### Analysis
+
+This scenario simulated early-stage attacker reconnaissance by identifying open or responsive TCP ports without fully establishing connections. The scan behavior was characterized by repeated SYN packets sent to multiple ports, which is commonly used by attackers to map services running on a target system.
+
+Because the TCP handshake was not completed, the activity appeared as numerous connection attempts rather than full sessions, making it indicative of a half-open (SYN) scan. This type of behavior is frequently used to gather information while minimizing detection.
+
+The Snort alerts confirmed that the custom SYN detection rule successfully identified this pattern of reconnaissance activity.
+
+
+## Scenario 3: SSH Brute Force Simulation
+
+Simulate repeated failed login attempts that resemble a credential attack.
+
+### Activity Execution
+
+To simulate a brute force attack, I initiated repeated SSH login attempts from the Windows VM to the Ubuntu Snort sensor using the following command: `ssh analyst@172.16.14.129`. After entering the command, multiple incorrect passwords were intentionally entered in succession. This generated repeated authentication failures, mimicking brute force behavior where an attacker attempts to gain unauthorized access by trying multiple credentials within a short period of time.
+
+### Observed Behavior
+
+On the Windows VM, each failed login attempt resulted in repeated “Permission denied” responses, confirming that authentication was unsuccessful.
+
+At the same time, Snort generated alerts labeled **“SSH Brute Force Attempt”**, indicating that multiple connection attempts to port 22 were being detected within a short time frame.
+
+Each alert included:
+
+- Source IP: `172.16.14.128` (Windows VM)
+- Destination IP: `172.16.14.129` (Ubuntu VM)
+- Destination Port: `22` (SSH)
+
+Additionally, the Snort output also showed **"SYN Port Scan Detected"** alerts, which occurred because each SSH attempt begins with a TCP connection request, triggering both the SYN scan rule and the brute force detection rule.
+
+### Screenshot(s) Needed
+
+15-ssh-bruteforce-windows.png
+
+Windows Command Prompt showing:
+ssh analyst@172.16.14.129
+multiple “Permission denied” messages
+
+16-snort-bruteforce-alerts.png
+
+Snort console output showing:
+“SSH Brute Force Attempt” alerts
+source → destination IP
+port 22 activity
+
+### Analysis
+
+This scenario simulated a brute force attack by generating repeated SSH login attempts against the Ubuntu system. The behavior was characterized by multiple failed authentication attempts within a short period, which is a common method attackers use to gain unauthorized access.
+
+The Snort brute force detection rule successfully identified this pattern by tracking repeated connection attempts from the same source IP to port 22. Because the threshold condition was met (multiple attempts within a defined time window), Snort generated alerts indicating potential brute force activity.
+
+The presence of both brute force and SYN alerts demonstrates how different detection rules can overlap, providing additional context during analysis.
+
+# Snort Operational Modes Analysis
+
