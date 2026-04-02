@@ -1,9 +1,9 @@
-# SOC Detection Lab: Snort IDS with ICMP SYN Scan Brute Force Analysis
+# SOC Detection Lab: Snort IDS with ICMP, SYN Scan & Brute Force Analysis
 
 ## Overview
 
 
-This Snort Instrusion Decection Lab was built with two isolated virtual machines: an Ubuntu VM running Snort and a Windows VM used to generate network traffic. The lab was designed to simulate three realistic SOC-relevant scenarios on limited hardware: a benign ICMP baseline, a TCP SYN reconnaissance scan, and a controlled SSH brute-force simulation.
+This Snort Intrusion Decection Lab was built with two isolated virtual machines: an Ubuntu VM running Snort and a Windows VM used to generate network traffic. The lab was designed to simulate three realistic SOC-relevant scenarios on limited hardware: a benign ICMP baseline, a TCP SYN reconnaissance scan, and a controlled SSH brute-force simulation.
 
 The purpose of this project was not just to "run Snort," but to practice the workflow a SOC analyst would actually follow:
 - Establish a normal baseline
@@ -17,8 +17,9 @@ Because the host machine was a 2022 MacBook Pro with 8 GB of RAM, the lab was in
 The main goals of this lab were to:
 1. Build an isolated virtual network for safe traffic generation
 2. Configure Snort on Ubuntu to monitor live traffic
-3. Understand the difference between normal and suspicious network activity
-4. Simulate realistic SOC scenarios without resource-heavy tooling
+3. Simulate realistic SOC scenarios
+4. Monitor and analyze live data traffic
+5. Understand the difference between normal and suspicious network activity
 
 ## Environment
 ### Host System
@@ -105,4 +106,28 @@ Ubuntu terminal showing ip a with interface and IP
 
 ### Verification
 
-I began by ran `ip a` to display the IP addresses and status of all network interfaces on the Ubuntu server.
+I began by running `ip a` to display the IP addresses and status of all network interfaces on the Ubuntu server. From there, I identified the interface name `enp2s0`, Ubuntu IP address `172.16.14.129` and subnet `172.16.14.0/24`.
+
+
+## Step 5: Nmap Installation
+
+Next, Nmap was installed on the Windows VM to prepare for generating network traffic that would later be analyzed by Snort. This step ensured that a reliable tool was available to generate controlled network traffic. Installing and validating Nmap allowed for the simulation of real-world activity that could be detected and analyzed by Snort, mimicking tasks performed by SOC analysts.
+
+### Screenshot needed
+
+07-nmap-download-install.png
+
+Nmap website and/or installation progress window
+07-nmap-version-check.png
+
+Command prompt showing nmap --version output
+
+### Installation
+
+The official Nmap website was accessed from the Windows VM to download the latest version of Nmap. The installer was executed, and Nmap was installed using the default configuration settings. 
+
+After installation, the `nmap --version` command was ran in Command Prompt to verify that Nmap was successfully installed without any errors, and available was on the system.
+
+## Step 5: Verify Connectivity Between Virtual Machines
+
+Before generating more advanced traffic, connectivity between the Windows VM and the Ubuntu VM was verified using a basic ICMP test.
