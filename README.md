@@ -108,10 +108,51 @@ Ubuntu terminal showing ip a with interface and IP
 
 I began by running `ip a` to display the IP addresses and status of all network interfaces on the Ubuntu server. From there, I identified the interface name `enp2s0`, Ubuntu IP address `172.16.14.129` and subnet `172.16.14.0/24`.
 
+## Step 5: Create Custom Snort Detection Rules
 
-## Step 5: Nmap Installation
+For this step, I ran `sudo nano /etc/snort/rules/local.rules` to add custom detection rules to the `local.rules` file. Adding custom detection rules defines what types of traffic Snort should identify and alert on within the lab environment. These custom rules were used to tell Snort what suspicious or notable activity to look for, rather than relying only on default behavior.
 
-Next, Nmap was installed on the Windows VM to prepare for generating network traffic that would later be analyzed by Snort. This step ensured that a reliable tool was available to generate controlled network traffic. Installing and validating Nmap allowed for the simulation of real-world activity that could be detected and analyzed by Snort, mimicking tasks performed by SOC analysts.
+### Screenshot needed
+
+10-snort-local-rules.png
+
+local.rules file showing custom rules
+
+### Rules Implemented
+
+<ins>SSH Brute Force Detection:</ins>
+
+`alert tcp any any -> $HOME_NET 22 (msg:"SSH Brute Force Attempt"; flags:S; threshold:type threshold, track by_src, count 2, seconds 60; sid:1000003; rev:1;)`
+
+**What It Means:**
+
+Alert when 2 or more connection attempts to port 22 are detected from the same source within a 60 second window. This simulates brute force behavior by identifying repeated authentication attempts, which is a common attack pattern against SSH services.
+
+<ins>ICMP Rule:</ins>
+
+`alert icmp any any -> $HOME_NET any (msg:"ICMP Test Detected"; sid:1000001; rev:1;)`
+
+**What It Means:**
+
+Alert whenever any system sends ICMP (ping) traffic to the internal network.
+
+<ins>SYN Scan:</ins>
+
+`alert tcp any any -> $HOME_NET any (flags:S; msg:"SYN Port Scan Detected"; sid:1000002; rev:1;)`
+
+**What It Means:**
+
+Alert when a system attempts to initiate TCP connections to the internal network using SYN packets, which may indicate port scanning or reconnaissance activity.
+
+
+
+
+
+
+
+## Step 6: Nmap Installation
+
+Next, I installed Nmap on the Windows VM to prepare for generating network traffic that would later be analyzed by Snort. This step ensured that a reliable tool was available to generate controlled network traffic. Installing and validating Nmap allowed for the simulation of real-world activity that could be detected and analyzed by Snort.
 
 ### Screenshot needed
 
@@ -128,6 +169,18 @@ The official Nmap website was accessed from the Windows VM to download the lates
 
 After installation, the `nmap --version` command was ran in Command Prompt to verify that Nmap was successfully installed without any errors, and available was on the system.
 
-## Step 5: Verify Connectivity Between Virtual Machines
+## Step 7: Verify Connectivity Between Virtual Machines
 
-Before generating more advanced traffic, connectivity between the Windows VM and the Ubuntu VM was verified using a basic ICMP test.
+Before generating more advanced traffic, connectivity between the Windows VM and the Ubuntu VM was verified using a basic ICMP test. Doing so ensured that the lab environment was properly set up before generating additional traffic. Verifying connectivity is a critical prerequisite, as all subsequent activity (scans, authentication attempts, and monitoring in Snort) depends on successful communication between systems.
+
+### Screenshot needed
+
+06-windows-ping-command.png
+
+Windows command prompt showing successful ping replies from 172.16.14.129
+
+### Verification
+
+From the Windows VM, I pinged the Ubuntu VM's IP address by running `ping 172.16.14.129` in the Command Prompt. The Windows VM sent ICMP echo requests to the Ubuntu VM’s IP address (172.16.14.129) to confirm that both systems could successfully communicate across the configured host-only network. 
+
+The network configuration between both VMs was functioning correctly. The connection was successfully established, as indicated by reply messages from the Ubuntu VM (e.g., Reply from 172.16.14.129). No packet loss occurred (0% loss), confirming stable communication and consistent response times indicated reliable connectivity.
