@@ -99,7 +99,9 @@ I began by running `ip a` to display the IP addresses and status of all the netw
 
 ## Step 4: Configure HOME_NET in Snort
 
-The fourth step in this lab was configuring `HOME_NET`. Snort requires a defined internal network range to properly distinguish between trusted internal traffic and potentially suspicious activity. In this lab, both the Ubuntu VM and Windows VM were assigned IP addresses within the `172.16.14.0/24` subnet. Leaving `HOME_NET` as `any` makes alerts less meaningful. To ensure accurate monitoring and detection, the `HOME_NET` variable in the Snort configuration was updated to match the `172.16.14.0/24` subnet.
+The fourth step in this lab was configuring `HOME_NET`. Snort requires a defined internal network range to properly distinguish between trusted internal traffic and potentially suspicious activity. In this lab, both the Ubuntu VM and Windows VM were assigned IP addresses within the `172.16.14.0/24` subnet. 
+
+Leaving `HOME_NET` as `any` makes alerts less meaningful. To ensure accurate monitoring and detection, the `HOME_NET` variable in the Snort configuration was updated to match the `172.16.14.0/24` subnet.
 
 ### Screenshot
 
@@ -109,12 +111,12 @@ show the line: ipvar HOME_NET 172.16.14.0/24
 
 ### Configuration
 
-Firstly, I ran `sudo nano /etc/snort/snort.conf` to open the Snort configuration file, to edit it. From there, I changed `ipvar HOME_NET any` to `ipvar HOME_NET 172.16.14.0/24`. 
+Firstly, I ran `sudo nano /etc/snort/snort.conf` to open the Snort configuration file so i'd be able to edit it. From there, I located `ipvar HOME_NET any` and changed it to `ipvar HOME_NET 172.16.14.0/24`. 
 
 
 ## Step 5: Validate the Snort Configuration
 
-Before running Snort, I had to validate the configuration. This prevents wasting time troubleshooting live traffic and makes sure everything is configured how its supposed to. 
+Before running Snort, I had to validate the configuration. This prevents wasting time troubleshooting live traffic if anything goes wrong, and makes sure everything is configured how its supposed to. 
 
 ### Screenshot needed
 
@@ -145,7 +147,7 @@ local.rules file showing custom rules
 
 **What It Means:**
 
-Alert when 2 or more connection attempts to port 22 are detected from the same source within a 60 second time frame. This simulates brute force behavior by identifying repeated authentication attempts, which is a common attack pattern against SSH services.
+Alert when 2 or more connection attempts to port 22 are detected from the same source within a 60 second time frame. This simulates brute force behavior by identifying repeated authentication attempts.
 
 <ins>ICMP Rule:</ins>
 
@@ -181,7 +183,7 @@ Command prompt showing nmap --version output
 
 The official Nmap website was accessed from the Windows VM to download the latest version of Nmap. The installer was executed, and Nmap was installed using the default configuration settings. 
 
-After installation, the `nmap --version` command was ran in Command Prompt to verify that Nmap was successfully installed without any errors, and available was on the system.
+After installation, the `nmap --version` command was ran in Command Prompt to verify that Nmap was successfully installed without any errors and was available on the system.
 
 ## Step 8: Verify Connectivity Between Virtual Machines
 
@@ -195,9 +197,9 @@ Windows command prompt showing successful ping replies from 172.16.14.129
 
 ### Verification
 
-From the Windows VM, I pinged the Ubuntu VM's IP address by running `ping 172.16.14.129` in the Command Prompt. The Windows VM sent ICMP echo requests to the Ubuntu VM’s IP address (172.16.14.129) to confirm that both systems could successfully communicate across the configured host-only network. 
+From the Windows VM, I pinged the Ubuntu VM's IP address by running `ping 172.16.14.129` in the Command Prompt. The Windows VM sent ICMP echo requests to the Ubuntu VM IP address (172.16.14.129) to confirm that both systems could successfully communicate across the configured host-only network. 
 
-The network configuration between both VMs was functioning correctly. The connection was successfully established, as indicated by reply messages from the Ubuntu VM (e.g., Reply from 172.16.14.129). No packet loss occurred (0% loss), confirming stable communication and consistent response times indicated reliable connectivity.
+The network configuration between both VMs was functioning correctly. The connection was successfully established, as indicated by reply messages from the Ubuntu VM (e.g., Reply from 172.16.14.129). No packet loss occurred (0% loss) confirming stable communication. The consistent response times indicated reliable connectivity.
 
 ## Step 9: Run Snort in Live Console Mode
 
