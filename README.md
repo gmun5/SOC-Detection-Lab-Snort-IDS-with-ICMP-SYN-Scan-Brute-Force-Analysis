@@ -1,15 +1,15 @@
-# SOC Detection Lab: Snort IDS with Brute Force, ICMP, and SYN Scan Analysis
+# SOC Detection Lab: Snort IDS Traffic Analysis (ICMP, SYN Scan, and SSH Brute Force)
 
 # Overview
 
 
-This Snort Intrusion Detection Lab was built with two isolated virtual machines: an Ubuntu VM running Snort, and a Windows VM used to generate network traffic. The lab was designed to simulate three realistic SOC-relevant scenarios: a controlled SSH brute-force simulation, a benign ICMP baseline, and a TCP SYN reconnaissance scan. 
+This Snort Intrusion Detection Lab was built with two isolated virtual machines: an Ubuntu VM running Snort, and a Windows VM used to generate network traffic. The lab was designed to simulate three realistic SOC-relevant scenarios: an SSH brute-force simulation, a benign ICMP baseline, and a TCP SYN reconnaissance scan. 
 
 The purpose of this lab was not just to "run Snort", but to practice the workflow a SOC analyst would actually follow. To simulate the workflow, I had to:
 - Establish a normal baseline
 - Generate suspicious activity
 - Observe alerts and packet behavior
-- Identify source/destination and protocol details
+- Identify source/destination IP and protocol details
 
 Because the host machine was a 2022 MacBook Pro with 8 GB of RAM, the lab was intentionally kept lightweight by using only two VMs at a time.
 
@@ -20,7 +20,7 @@ The main goals of this lab were to:
 3. Simulate realistic SOC scenarios
 4. Monitor and analyze live data traffic
 5. Understand the difference between normal and suspicious network activity
-6. Use Snort operational modes to analyze packet-level data and alert-based detection
+6. Use Snort operational modes to analyze alert-based detection and packet-level data
 
 # Environment
 
@@ -34,11 +34,11 @@ The main goals of this lab were to:
 - Windows VM (*traffic generator*)
 
 ## Network Design
-Both virtual machines were configured to use a private host-only network in VMware Fusion so the generated traffic stayed inside the lab and did not touch the host network.
+- Both virtual machines were configured to use a host-only network in VMware Fusion
 
 ## Key Lab IP Information
-- Ubuntu VM (running Snort IDS): `172.16.14.129`
-- Windows VM (traffic generator): `172.16.14.128`
+- Ubuntu VM: `172.16.14.129`
+- Windows VM: `172.16.14.128`
 - Lab network (subnet): `172.16.14.0/24`
 - Snort monitoring interface: `enp2s0`
 
@@ -53,7 +53,7 @@ Both virtual machines were configured to use a private host-only network in VMwa
 # Skills Demonstrated
 - IDS setup and validation
 - Network segmentation and VM isolation
-- Snort traffic inspection and alert monitoring (multiple operational modes)
+- Snort traffic inspection and alert monitoring
 - ICMP traffic analysis
 - TCP SYN reconnaissance detection
 - Repeated authentication attempt analysis
@@ -100,7 +100,7 @@ The next step was to identify the active network interface, assigned IP address,
 
 ### Verification
 
-I began by running `ip a` to display the IP addresses and status of all the network interfaces on the Ubuntu server. From there, I identified the interface name `enp2s0`, Ubuntu IP address `172.16.14.129` and subnet `172.16.14.0/24`.
+I began by running `ip a` to display the IP addresses and status of the network interface on the Ubuntu server. From there, I identified the interface name `enp2s0`, Ubuntu IP address `172.16.14.129` and subnet `172.16.14.0/24`.
 
 
 ## Step 4: Configure HOME_NET in Snort
@@ -130,7 +130,7 @@ Before running Snort, I had to validate the configuration. This prevents wasting
 
 ### Validation
 
-I ran `sudo snort -T -c /etc/snort/snort.conf -i enp2s0` in Ubuntu. This validates that the Snort configuration, rules, and network interface are correctly set up and ready for execution. The command prints a long validation report, and at the end of it writes "Snort successfully validated the configuration!".
+I ran `sudo snort -T -c /etc/snort/snort.conf -i enp2s0` in Ubuntu. This validates that the Snort configuration, rules, and network interface are correctly set up and ready for execution. The command prints a long validation report, and at the end of it writes "**Snort successfully validated the configuration!**".
 
 
 ## Step 6: Create Custom Snort Detection Rules
@@ -139,7 +139,7 @@ Before running Snort, I also had to create custom detection rules. For this step
 
 ### Screenshot
 
-<img width="1914" height="1080" alt="Screenshot 2026-04-01 at 3 03 07 AM" src="https://github.com/user-attachments/assets/a673fba8-e4d5-4dcb-9d96-10aa2b6c94b5" />
+<img width="1914" height="1033" alt="Screenshot 2026-04-01 at 3 03 07 AM" src="https://github.com/user-attachments/assets/6e79b416-4d40-4b7f-9535-a42dea5bae95" />
 
 
 ### Rules Implemented
@@ -171,7 +171,7 @@ Alert when any system attempts to initiate TCP connections to the internal netwo
 
 ## Step 7: Nmap Installation
 
-Next, I installed Nmap on the Windows VM to prepare for generating network traffic that would later be analyzed by Snort. This step ensured that a reliable tool was available to generate controlled network traffic. Installing and validating Nmap allowed for the simulation of real-world activity that could be detected and analyzed by Snort.
+Next, I installed Nmap on the Windows VM to prepare for generating network traffic that would later be analyzed by Snort. This step ensured that a reliable tool was available to generate controlled network traffic.
 
 ### Screenshot(s)
 
@@ -201,7 +201,7 @@ From the Windows VM, I pinged the Ubuntu VM's IP address by running `ping 172.16
 
 The network configuration between both VMs was functioning correctly. The connection was successfully established, as indicated by reply messages from the Ubuntu VM (e.g., Reply from 172.16.14.129). No packet loss occurred (0% loss) confirming stable communication. The consistent response times indicated reliable connectivity.
 
-## Step 9: Run Snort in Live Console Mode
+## Step 9: Run Snort in Console Alert Mode
 
 To start the lab, Snort was ran in console alert mode. This mode was used because the view is cleaner and more practical than dumping every raw packet.
 
@@ -223,7 +223,8 @@ Establish a baseline of benign network traffic before introducing suspicious act
 
 ### Actitivy Execution
 
-To generate baseline traffic, I initiated ICMP requests from the Windows VM to the Ubuntu VM by using the `ping` command targeting the Ubuntu IP address `172.16.14.129`. This was done to simulate normal, benign network communication between hosts within the lab environment. While the ping command was running, Snort was actively monitoring traffic on the Ubuntu VM. 
+To generate baseline traffic, I initiated ICMP requests from the Windows VM to the Ubuntu VM by using the `ping` command targeting the Ubuntu IP address `172.16.14.129`. 
+
 
 ### Observed Behavior
 
@@ -239,7 +240,7 @@ The Snort console output displayed repeated alerts labeled **"ICMP Test Detected
 
 ### Analysis
 
-This scenario established a benign baseline by generating normal ICMP echo traffic from the Windows VM to the Ubuntu Snort sensor. The traffic pattern was expected and consistent, making it useful as a reference point for later suspicious scenarios.
+While the ping command was running, Snort was actively monitoring traffic on the Ubuntu VM. This scenario established a benign baseline by generating normal ICMP echo traffic from the Windows VM to the Ubuntu Snort sensor. The traffic pattern was expected and consistent, making it useful as a reference point for later suspicious scenarios.
 
 ## Scenario 2: TCP SYN Scan (Reconnaissance)
 
@@ -247,7 +248,8 @@ Simulate early-stage attacker reconnaissance by identifying open or responsive T
 
 ### Activity Execution
 
-To simulate reconnaissance activity, I initiated a SYN scan from the Windows VM targeting the Ubuntu Snort sensor using the following command: `nmap -sS 172.16.14.129`. This command performs a TCP SYN scan, which sends connection requests to multiple ports on the target system without completing the full TCP handshake. The purpose of this scan was to identify open or responsive ports on the Ubuntu VM, simulating early-stage attacker behavior.
+To simulate reconnaissance activity, I initiated a SYN scan from the Windows VM targeting the Ubuntu Snort sensor using the following command: `nmap -sS 172.16.14.129`. This command performs a TCP SYN scan, which sends connection requests to multiple ports on the target system without completing the full TCP handshake. 
+
 
 ### Observed Behavior
 
@@ -257,7 +259,7 @@ After executing the scan, Snort generated multiple real-time alerts indicating t
 
 - Source IP: `172.16.14.128` (Windows VM)
 - Destination IP: `172.16.14.129` (Ubuntu VM)
-- Different destination ports (e.g., 80, 443, 22, etc.)
+- Different destination ports (e.g., 79, 259, 7443, etc.)
 - Alert message: **“SYN Port Scan Detected”**
 
 The high volume of alerts in a short time frame confirmed that multiple connection attempts were being made rapidly across different ports, which is consistent with port scanning behavior.
@@ -339,7 +341,7 @@ As stated earlier, to start the lab, `sudo snort -A console -q -c /etc/snort/sno
 
 To gain a deeper understanding of packet-level data, Snort was used in verbose packet inspection (sniffer) mode using `sudo snort -vde -c /etc/snort/snort.conf -i enp2s0`, allowing for a detailed analysis of raw network traffic.
 
-### Screenshot
+### Screenshot(s)
 
 <img width="1916" height="1080" alt="Screenshot 2026-04-02 at 3 34 21 PM" src="https://github.com/user-attachments/assets/c934666b-af37-4189-9cea-3cca4ccc3629" />
 
