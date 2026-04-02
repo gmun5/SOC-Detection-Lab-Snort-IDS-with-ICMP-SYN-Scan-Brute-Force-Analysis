@@ -161,7 +161,7 @@ Alert whenever any system sends ICMP (ping) traffic to the internal network.
 
 **What It Means:**
 
-Alert when a system attempts to initiate TCP connections to the internal network using SYN packets, which may indicate port scanning or reconnaissance activity.
+Alert when any system attempts to initiate TCP connections to the internal network using SYN packets, which may indicate port scanning or reconnaissance activity.
 
 
 ## Step 7: Nmap Installation
