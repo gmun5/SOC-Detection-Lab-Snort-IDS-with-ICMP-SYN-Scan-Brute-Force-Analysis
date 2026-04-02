@@ -59,15 +59,28 @@ Both virtual machines were configured to use a private host-only network in VMwa
 
 The first requirement for this lab was isolation. In VMware Fusion, both the Ubuntu VM and the Windows VM were configured to use Private to my Mac. This creates a host-only network so the traffic remains contained inside the lab.
 
+### Screenshots
+01-vm-network-settings.png
+
+VMware Fusion settings page showing Private to my Mac selected for the Ubuntu VM
+Repeat for Windows if possible, or show one screenshot and mention both VMs were configured the same way
+
 ### Reasoning
 
 If the VMs were left on NAT or bridged networking, scan traffic could mix with the real host network. That would make the lab less controlled and less professional.
 
-### Verification
 
-On Ubuntu I input the `ip a` command to identify the active network interface and assigned IP address for Snort monitoring and traffic targeting. I also used the `ip route` command to verify network routing and confirm the lab subnet configuration for proper VM-to-VM communication.
+## Step 2: Install and Verify Snort on Ubuntu
 
-The key checks were that:
-- the active interface was enp2s0
-- the VM had an address in the 172.16.14.0/24 range
-- there was no default route to the internet
+The first step in the lab was installing Snort on the Ubuntu VM. This ensured the IDS was available before configuring networking and generating traffic.
+
+### Screenshot needed
+
+03-snort-install-or-version.png
+
+terminal showing snort --version
+
+### Installation
+I executed the `sudo apt-get update` command to download the latest package information for Ubuntu. Then, I executed the `sudo apt-get install snort -y` command to install Snort. Lastly, I executed the `snort --version` command to verify installation.
+
+## Step 3: Verify Network Interface and IP
