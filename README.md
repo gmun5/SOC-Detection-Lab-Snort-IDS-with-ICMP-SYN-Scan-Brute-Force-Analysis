@@ -56,6 +56,7 @@ Both virtual machines were configured to use a private host-only network in VMwa
 - Repeated authentication attempt analysis
 - Traffic pattern interpretation
 
+
 ## Step 1: Configure the Virtual Network
 
 The first requirement for this lab was isolation. In VMware Fusion, both the Ubuntu VM and the Windows VM were configured to use Private to my Mac. This creates a host-only network so the traffic remains contained inside the lab. If the VMs were left on NAT or bridged networking, scan traffic could mix with the real host network. That would make the lab less controlled and less professional.
@@ -67,7 +68,7 @@ VMware Fusion settings page showing Private to my Mac selected for the Ubuntu VM
 Repeat for Windows if possible, or show one screenshot and mention both VMs were configured the same way
 
 
-## Step 2: Install and Verify Snort on Ubuntu
+## Step 2: Install Snort on Ubuntu
 
 The second step in the lab was installing Snort on the Ubuntu VM. This ensured the IDS was available before configuring networking and generating traffic.
 
@@ -80,23 +81,10 @@ terminal showing snort --version
 ### Installation
 I ran `sudo apt-get update` to download the latest package information for Ubuntu. I then ran `sudo apt-get install snort -y` to install Snort. Lastly, I typed `snort --version` to verify the installation.
 
-## Step 3: Configure HOME_NET in Snort
 
-The third step in this lab was configuring `HOME_NET`. Snort requires a defined internal network range to properly distinguish between trusted internal traffic and potentially suspicious activity. In this lab, both the Ubuntu VM and Windows VM were assigned IP addresses within the `172.16.14.0/24` subnet. Leaving `HOME_NET` as `any` makes alerts less meaningful. To ensure accurate monitoring and detection, the `HOME_NET` variable in the Snort configuration was updated to match the `172.16.14.0/24` subnet.
+## Step 3: Verify Network Interface and IP
 
-### Screenshot
-
-03-snort-home-net-config.png
-
-show the line: ipvar HOME_NET 172.16.14.0/24
-
-### Configuration
-
-Firstly, I ran `sudo nano /etc/snort/snort.conf` to open the Snort configuration file to edit it. From there, I changed `ipvar HOME_NET any` to `ipvar HOME_NET 172.16.14.0/24`. 
-
-## Step 4: Verify Network Interface and IP
-
-After configuring `HOME_NET`, the next step was to identify the active network interface, assigned IP address, and subnet information. This information was required to; specify the correct interface for Snort, correctly configure `HOME_NET` and target the Ubuntu VM from the Windows VM. 
+The next step was to identify the active network interface, assigned IP address, and subnet information. This information was required to; specify the correct interface for Snort, correctly configure `HOME_NET` and target the Ubuntu VM from the Windows VM. 
 
 ### Screenshots needed
 
@@ -108,7 +96,41 @@ Ubuntu terminal showing ip a with interface and IP
 
 I began by running `ip a` to display the IP addresses and status of all network interfaces on the Ubuntu server. From there, I identified the interface name `enp2s0`, Ubuntu IP address `172.16.14.129` and subnet `172.16.14.0/24`.
 
-## Step 5: Create Custom Snort Detection Rules
+
+## Step 4: Configure HOME_NET in Snort
+
+The fourth step in this lab was configuring `HOME_NET`. Snort requires a defined internal network range to properly distinguish between trusted internal traffic and potentially suspicious activity. In this lab, both the Ubuntu VM and Windows VM were assigned IP addresses within the `172.16.14.0/24` subnet. Leaving `HOME_NET` as `any` makes alerts less meaningful. To ensure accurate monitoring and detection, the `HOME_NET` variable in the Snort configuration was updated to match the `172.16.14.0/24` subnet.
+
+### Screenshot
+
+03-snort-home-net-config.png
+
+show the line: ipvar HOME_NET 172.16.14.0/24
+
+### Configuration
+
+Firstly, I ran `sudo nano /etc/snort/snort.conf` to open the Snort configuration file to edit it. From there, I changed `ipvar HOME_NET any` to `ipvar HOME_NET 172.16.14.0/24`. 
+
+
+## Step 5: Validate the Snort Configuration
+
+Before running live monitoring, I had to validate the configuration. This prevents wasting time troubleshooting live traffic and makes sure everything is configured how its supposed to. 
+
+### Screenshot needed
+
+04-snort-config-validation.png
+
+terminal showing the validation command and the success message at the bottom
+
+### Validation
+
+I ran `sudo snort -T -c /etc/snort/snort.conf -i enp2s0` in the Ubuntu. This validates that the Snort configuration, rules, and network interface are correctly set up and ready for execution. The command prints a long validation report, and at the end of it writes "Snort successfully validated the configuration".
+
+
+
+
+
+## Step 6: Create Custom Snort Detection Rules
 
 For this step, I ran `sudo nano /etc/snort/rules/local.rules` to add custom detection rules to the `local.rules` file. Adding custom detection rules defines what types of traffic Snort should identify and alert on within the lab environment. These custom rules were used to tell Snort what suspicious or notable activity to look for, rather than relying only on default behavior.
 
@@ -145,12 +167,7 @@ Alert whenever any system sends ICMP (ping) traffic to the internal network.
 Alert when a system attempts to initiate TCP connections to the internal network using SYN packets, which may indicate port scanning or reconnaissance activity.
 
 
-
-
-
-
-
-## Step 6: Nmap Installation
+## Step 7: Nmap Installation
 
 Next, I installed Nmap on the Windows VM to prepare for generating network traffic that would later be analyzed by Snort. This step ensured that a reliable tool was available to generate controlled network traffic. Installing and validating Nmap allowed for the simulation of real-world activity that could be detected and analyzed by Snort.
 
@@ -169,7 +186,7 @@ The official Nmap website was accessed from the Windows VM to download the lates
 
 After installation, the `nmap --version` command was ran in Command Prompt to verify that Nmap was successfully installed without any errors, and available was on the system.
 
-## Step 7: Verify Connectivity Between Virtual Machines
+## Step 8: Verify Connectivity Between Virtual Machines
 
 Before generating more advanced traffic, connectivity between the Windows VM and the Ubuntu VM was verified using a basic ICMP test. Doing so ensured that the lab environment was properly set up before generating additional traffic. Verifying connectivity is a critical prerequisite, as all subsequent activity (scans, authentication attempts, and monitoring in Snort) depends on successful communication between systems.
 
@@ -184,3 +201,4 @@ Windows command prompt showing successful ping replies from 172.16.14.129
 From the Windows VM, I pinged the Ubuntu VM's IP address by running `ping 172.16.14.129` in the Command Prompt. The Windows VM sent ICMP echo requests to the Ubuntu VM’s IP address (172.16.14.129) to confirm that both systems could successfully communicate across the configured host-only network. 
 
 The network configuration between both VMs was functioning correctly. The connection was successfully established, as indicated by reply messages from the Ubuntu VM (e.g., Reply from 172.16.14.129). No packet loss occurred (0% loss), confirming stable communication and consistent response times indicated reliable connectivity.
+
