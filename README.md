@@ -13,33 +13,36 @@ The purpose of this lab was not just to "run Snort", but to practice the workflo
 
 Because the host machine was a 2022 MacBook Pro with 8 GB of RAM, the lab was intentionally kept lightweight by using only two VMs at a time.
 
-## Lab Objectives
+# Lab Objectives
 The main goals of this lab were to:
 1. Build an isolated virtual network for safe traffic generation
 2. Configure Snort on Ubuntu to monitor live traffic
 3. Simulate realistic SOC scenarios
 4. Monitor and analyze live data traffic
 5. Understand the difference between normal and suspicious network activity
+6. Use Snort operational modes to analyze packet-level data and alert-based detection
 
-## Environment
-### Host System
+# Environment
+
+## Host System
 - 2022 Macbook Pro
 - 8 GB RAM
 - VMware Fusion
 
-### Virtual Machines
+## Virtual Machines
 - Ubuntu Server (CLI) VM (*Snort sensor*)
 - Windows VM (*traffic generator*)
 
-### Network Design
+## Network Design
 Both virtual machines were configured to use a private host-only network in VMware Fusion so the generated traffic stayed inside the lab and did not touch the host network.
 
-### Key Lab IP Information
+## Key Lab IP Information
 - Ubuntu VM (running Snort IDS): `172.16.14.129`
+- Windows VM (traffic generator): `172.16.14.128`
 - Lab network (subnet): `172.16.14.0/24`
 - Snort monitoring interface: `enp2s0`
 
-## Tools Used
+# Tools Used
 - Snort
 - Nmap on Windows VM
 - OpenSSH Client
@@ -47,10 +50,10 @@ Both virtual machines were configured to use a private host-only network in VMwa
 - Ubuntu Server (CLI)
 - Windows Command Prompt
 
-## Skills Demonstrated
+# Skills Demonstrated
 - IDS setup and validation
 - Network segmentation and VM isolation
-- Snort traffic inspection and alert monitoring
+- Snort traffic inspection and alert monitoring (multiple operational modes)
 - ICMP traffic analysis
 - TCP SYN reconnaissance detection
 - Repeated authentication attempt analysis
@@ -259,7 +262,7 @@ To simulate reconnaissance activity, I initiated a SYN scan from the Windows VM 
 
 After executing the scan, Snort generated multiple real-time alerts indicating that SYN packets were being sent from the Windows VM to the Ubuntu VM across various destination ports.
 
-Each alert included:
+<ins>Each alert included:</ins>
 
 - Source IP: `172.16.14.128` (Windows VM)
 - Destination IP: `172.16.14.129` (Ubuntu VM)
@@ -302,7 +305,7 @@ On the Windows VM, each failed login attempt resulted in repeated “Permission 
 
 At the same time, Snort generated alerts labeled **“SSH Brute Force Attempt”**, indicating that multiple connection attempts to port 22 were being detected within a short time frame.
 
-Each alert included:
+<ins>Each alert included:</ins>
 
 - Source IP: `172.16.14.128` (Windows VM)
 - Destination IP: `172.16.14.129` (Ubuntu VM)
@@ -343,7 +346,7 @@ As stated earlier, to start the lab, `sudo snort -A console -q -c /etc/snort/sno
 
 17-snort-alert-mode.png
 
-### What I learned:
+### What I Learned:
 
 - This mode displays alerts only triggered by rules
 - This mode is focused on detection, not raw traffic
