@@ -145,7 +145,7 @@ local.rules file showing custom rules
 
 **What It Means:**
 
-Alert when 2 or more connection attempts to port 22 are detected from the same source within a 60 second window. This simulates brute force behavior by identifying repeated authentication attempts, which is a common attack pattern against SSH services.
+Alert when 2 or more connection attempts to port 22 are detected from the same source within a 60 second time frame. This simulates brute force behavior by identifying repeated authentication attempts, which is a common attack pattern against SSH services.
 
 <ins>ICMP Rule:</ins>
 
