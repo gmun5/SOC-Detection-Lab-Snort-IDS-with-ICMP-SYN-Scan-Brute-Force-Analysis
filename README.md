@@ -335,3 +335,31 @@ The presence of both brute force and SYN alerts demonstrates how different detec
 
 # Snort Operational Modes Analysis
 
+## Mode 1: Console Alert Mode
+
+As stated earlier, to start the lab, `sudo snort -A console -q -c /etc/snort/snort.conf -i enp2s0` was ran in the Snort terminal to initiate Console Alert Mode. 
+
+### Screenshot
+
+17-snort-alert-mode.png
+
+### What I learned:
+
+- This mode displays alerts only triggered by rules
+- This mode is focused on detection, not raw traffic
+- This closely resembles how alerts appear in a SIEM
+- It is useful for quick analysis and identifying potential threats
+
+## Mode 2: Verbose Packet Inspection Mode
+
+To gain a deeper understanding of packet-level data, Snort was used in verbose packet inspection (sniffer) mode using `sudo snort -vde -c /etc/snort/snort.conf -i enp2s0`, allowing for a detailed analysis of raw network traffic.
+
+### Screenshot
+
+hjhfhjgvghjvgh
+
+### What I Learned:
+
+- Gained an understanding of which systems are communicating by analyzing source and destination IP addresses, ports, and protocols
+- Gained an understanding on how to examinine packet headers, payload data, and overall packet size to understand how data is transmitted
+- Gained an understanding of how to observe how systems interact on the network, including normal background activity (e.g. DNS requests) and system responses (e.g. ICMP “Destination Unreachable” messages)
