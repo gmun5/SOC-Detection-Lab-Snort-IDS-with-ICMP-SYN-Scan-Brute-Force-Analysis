@@ -109,7 +109,7 @@ show the line: ipvar HOME_NET 172.16.14.0/24
 
 ### Configuration
 
-Firstly, I ran `sudo nano /etc/snort/snort.conf` to open the Snort configuration file to edit it. From there, I changed `ipvar HOME_NET any` to `ipvar HOME_NET 172.16.14.0/24`. 
+Firstly, I ran `sudo nano /etc/snort/snort.conf` to open the Snort configuration file, to edit it. From there, I changed `ipvar HOME_NET any` to `ipvar HOME_NET 172.16.14.0/24`. 
 
 
 ## Step 5: Validate the Snort Configuration
@@ -125,9 +125,6 @@ terminal showing the validation command and the success message at the bottom
 ### Validation
 
 I ran `sudo snort -T -c /etc/snort/snort.conf -i enp2s0` in the Ubuntu. This validates that the Snort configuration, rules, and network interface are correctly set up and ready for execution. The command prints a long validation report, and at the end of it writes "Snort successfully validated the configuration".
-
-
-
 
 
 ## Step 6: Create Custom Snort Detection Rules
@@ -202,3 +199,15 @@ From the Windows VM, I pinged the Ubuntu VM's IP address by running `ping 172.16
 
 The network configuration between both VMs was functioning correctly. The connection was successfully established, as indicated by reply messages from the Ubuntu VM (e.g., Reply from 172.16.14.129). No packet loss occurred (0% loss), confirming stable communication and consistent response times indicated reliable connectivity.
 
+## Step 9: Run Snort in Live Console Mode
+
+To start the lab, Snort was ran in console alert mode. This mode was used because the view is cleaner and more practical than dumping every raw packet.
+
+### Screenshot needed
+
+05-snort-running-console.png
+
+terminal showing Snort running and waiting for traffic
+
+### Execution
+To begin, I ran `sudo snort -i enp2s0 -A console -q -c /etc/snort/snort.conf`. This command starts Snort in console mode, instructing it to monitor traffic on the specified network interface, apply the configured rules and settings from the configuration file, and display any detected alerts in real time.
