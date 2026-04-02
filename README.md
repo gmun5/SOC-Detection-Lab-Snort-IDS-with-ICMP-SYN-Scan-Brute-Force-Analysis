@@ -114,7 +114,7 @@ Firstly, I ran `sudo nano /etc/snort/snort.conf` to open the Snort configuration
 
 ## Step 5: Validate the Snort Configuration
 
-Before running live monitoring, I had to validate the configuration. This prevents wasting time troubleshooting live traffic and makes sure everything is configured how its supposed to. 
+Before running Snort, I had to validate the configuration. This prevents wasting time troubleshooting live traffic and makes sure everything is configured how its supposed to. 
 
 ### Screenshot needed
 
@@ -129,7 +129,7 @@ I ran `sudo snort -T -c /etc/snort/snort.conf -i enp2s0` in the Ubuntu. This val
 
 ## Step 6: Create Custom Snort Detection Rules
 
-For this step, I ran `sudo nano /etc/snort/rules/local.rules` to add custom detection rules to the `local.rules` file. Adding custom detection rules defines what types of traffic Snort should identify and alert on within the lab environment. These custom rules were used to tell Snort what suspicious or notable activity to look for, rather than relying only on default behavior.
+Before running Snort, I also had to create custom detection rules. For this step, I ran `sudo nano /etc/snort/rules/local.rules` to add custom detection rules to the `local.rules` file. Adding custom detection rules defines what types of traffic Snort should identify and alert on within the lab environment. These custom rules were used to tell Snort what suspicious or notable activity to look for, rather than relying only on default behavior.
 
 ### Screenshot needed
 
