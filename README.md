@@ -248,7 +248,7 @@ Simulate early-stage attacker reconnaissance by identifying open or responsive T
 
 ### Activity Execution
 
-To simulate reconnaissance activity, I initiated a SYN scan from the Windows VM targeting the Ubuntu Snort sensor using the following command: `nmap -sS 172.16.14.129`. This command performs a TCP SYN scan, which sends connection requests to multiple ports on the target system without completing the full TCP handshake. 
+To simulate reconnaissance activity, I initiated a SYN scan from the Windows VM targeting the Ubuntu Snort sensor using the following command: `nmap -sS 172.16.14.129`. 
 
 
 ### Observed Behavior
@@ -286,7 +286,7 @@ Simulate repeated failed login attempts that resemble a credential attack.
 
 ### Activity Execution
 
-To simulate a brute force attack, I initiated repeated SSH login attempts from the Windows VM to the Ubuntu Snort sensor using the following command: `ssh analyst@172.16.14.129`. After entering the command, multiple incorrect passwords were intentionally entered in succession. This generated repeated authentication failures, mimicking brute force behavior where an attacker attempts to gain unauthorized access by trying multiple credentials within a short period of time.
+To simulate a brute force attack, I initiated repeated SSH login attempts from the Windows VM to the Ubuntu Snort sensor using the following command: `ssh analyst@172.16.14.129`. After entering the command, multiple incorrect passwords were intentionally entered in succession.
 
 ### Observed Behavior
 
@@ -311,17 +311,16 @@ Additionally, the Snort output also showed **"SYN Port Scan Detected"** alerts, 
 
 ### Analysis
 
-This scenario simulated a brute force attack by generating repeated SSH login attempts against the Ubuntu system. The behavior was characterized by multiple failed authentication attempts within a short period, which is a common method attackers use to gain unauthorized access.
+This scenario simulated brute force behavior by initiating repeated SSH login attempts from the Windows VM to the Ubuntu system. It was designed to trigger the custom Snort brute force detection rule, which generates an alert when multiple connection attempts from the same source IP occur within a defined time window. Specifically, the rule was configured with a threshold of 2 attempts within 60 seconds.
 
-The Snort brute force detection rule successfully identified this pattern by tracking repeated connection attempts from the same source IP to port 22. Because the threshold condition was met (multiple attempts within a defined time window), Snort generated alerts indicating potential brute force activity.
+Because the threshold condition was met, Snort generated alerts indicating potential brute force activity. The presence of both brute force and SYN alerts demonstrates how different detection rules can overlap, providing additional context during analysis.
 
-The presence of both brute force and SYN alerts demonstrates how different detection rules can overlap, providing additional context during analysis.
 
 # Snort Operational Modes Analysis
 
 ## Mode 1: Console Alert Mode
 
-As stated earlier, to start the lab, `sudo snort -A console -q -c /etc/snort/snort.conf -i enp2s0` was ran in the Snort terminal to initiate Console Alert Mode. 
+As stated earlier, to start the lab, `sudo snort -i enp2s0 -A console -q -c /etc/snort/snort.conf` was ran in the Snort terminal to initiate Console Alert Mode. 
 
 ### Screenshot(s)
 
@@ -351,4 +350,4 @@ To gain a deeper understanding of packet-level data, Snort was used in verbose p
 
 - Gained an understanding of which systems are communicating by analyzing source and destination IP addresses, ports, and protocols
 - Gained an understanding on how to examinine packet headers, payload data, and overall packet size to understand how data is transmitted
-- Gained an understanding of how to observe how systems interact on the network, including normal background activity (e.g. DNS requests) and system responses (e.g. ICMP “Destination Unreachable” messages)
+- Gained an understanding of how to observe how systems interact on the network, including normal background activity (e.g. DNS requests) and system response (e.g. ICMP “Destination Unreachable”) messages
