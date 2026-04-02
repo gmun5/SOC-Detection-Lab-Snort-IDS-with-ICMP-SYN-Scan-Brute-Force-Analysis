@@ -77,11 +77,11 @@ The second step in the lab was installing Snort on the Ubuntu VM. This ensured t
 terminal showing snort --version
 
 ### Installation
-I executed the `sudo apt-get update` command to download the latest package information for Ubuntu. Then, I executed the `sudo apt-get install snort -y` command to install Snort. Lastly, I executed the `snort --version` command to verify installation.
+I ran `sudo apt-get update` to download the latest package information for Ubuntu. I then ran `sudo apt-get install snort -y` to install Snort. Lastly, I typed `snort --version` to verify the installation.
 
-## Step 3: Configure HOME_NET
+## Step 3: Configure HOME_NET in Snort
 
-The third step in this lab was configuring HOME_NET. Snort requires a defined internal network range to properly distinguish between trusted internal traffic and potentially suspicious activity. In this lab, both the Ubuntu VM and Windows VM were assigned IP addresses within the `172.16.14.0/24` subnet. Leaving `HOME_NET` as `any` makes alerts less meaningful. To ensure accurate monitoring and detection, the `HOME_NET` variable in the Snort configuration was updated to match the `172.16.14.0/24` subnet.
+The third step in this lab was configuring `HOME_NET`. Snort requires a defined internal network range to properly distinguish between trusted internal traffic and potentially suspicious activity. In this lab, both the Ubuntu VM and Windows VM were assigned IP addresses within the `172.16.14.0/24` subnet. Leaving `HOME_NET` as `any` makes alerts less meaningful. To ensure accurate monitoring and detection, the `HOME_NET` variable in the Snort configuration was updated to match the `172.16.14.0/24` subnet.
 
 ### Screenshot
 
@@ -89,6 +89,20 @@ The third step in this lab was configuring HOME_NET. Snort requires a defined in
 
 show the line: ipvar HOME_NET 172.16.14.0/24
 
-### Installation
+### Configuration
 
-Firstly, I executed the `sudo nano /etc/snort/snort.conf` command to open the Snort configuration file to edit it. From there, I changed `ipvar HOME_NET any` to `ipvar HOME_NET 172.16.14.0/24`. 
+Firstly, I ran `sudo nano /etc/snort/snort.conf` to open the Snort configuration file to edit it. From there, I changed `ipvar HOME_NET any` to `ipvar HOME_NET 172.16.14.0/24`. 
+
+## Step 4: Verify Network Interface and IP
+
+After configuring `HOME_NET`, the next step was to identify the active network interface, assigned IP address, and subnet information. This information was required to; specify the correct interface for Snort, correctly configure `HOME_NET` and target the Ubuntu VM from the Windows VM. 
+
+### Screenshots needed
+
+02-ubuntu-ip-interface.png
+
+Ubuntu terminal showing ip a with interface and IP
+
+### Verification
+
+I began by ran `ip a` to display the IP addresses and status of all network interfaces on the Ubuntu server.
