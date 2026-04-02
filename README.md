@@ -1,4 +1,4 @@
-# SOC Detection Lab: Snort IDS with ICMP, SYN Scan & Brute Force Analysis
+# SOC Detection Lab: Snort IDS with Brute Force, ICMP, and SYN Scan Analysis
 
 ## Overview
 
