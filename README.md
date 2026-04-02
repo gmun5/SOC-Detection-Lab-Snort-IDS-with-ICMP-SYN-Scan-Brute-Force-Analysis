@@ -57,7 +57,7 @@ Both virtual machines were configured to use a private host-only network in VMwa
 
 ## Step 1: Configure the Virtual Network
 
-The first requirement for this lab was isolation. In VMware Fusion, both the Ubuntu VM and the Windows VM were configured to use Private to my Mac. This creates a host-only network so the traffic remains contained inside the lab.
+The first requirement for this lab was isolation. In VMware Fusion, both the Ubuntu VM and the Windows VM were configured to use Private to my Mac. This creates a host-only network so the traffic remains contained inside the lab. If the VMs were left on NAT or bridged networking, scan traffic could mix with the real host network. That would make the lab less controlled and less professional.
 
 ### Screenshots
 01-vm-network-settings.png
@@ -65,14 +65,10 @@ The first requirement for this lab was isolation. In VMware Fusion, both the Ubu
 VMware Fusion settings page showing Private to my Mac selected for the Ubuntu VM
 Repeat for Windows if possible, or show one screenshot and mention both VMs were configured the same way
 
-### Reasoning
-
-If the VMs were left on NAT or bridged networking, scan traffic could mix with the real host network. That would make the lab less controlled and less professional.
-
 
 ## Step 2: Install and Verify Snort on Ubuntu
 
-The first step in the lab was installing Snort on the Ubuntu VM. This ensured the IDS was available before configuring networking and generating traffic.
+The second step in the lab was installing Snort on the Ubuntu VM. This ensured the IDS was available before configuring networking and generating traffic.
 
 ### Screenshot needed
 
@@ -83,4 +79,16 @@ terminal showing snort --version
 ### Installation
 I executed the `sudo apt-get update` command to download the latest package information for Ubuntu. Then, I executed the `sudo apt-get install snort -y` command to install Snort. Lastly, I executed the `snort --version` command to verify installation.
 
-## Step 3: Verify Network Interface and IP
+## Step 3: Configure HOME_NET
+
+The third step in this lab was configuring HOME_NET. Snort requires a defined internal network range to properly distinguish between trusted internal traffic and potentially suspicious activity. In this lab, both the Ubuntu VM and Windows VM were assigned IP addresses within the `172.16.14.0/24` subnet. Leaving `HOME_NET` as `any` makes alerts less meaningful. To ensure accurate monitoring and detection, the `HOME_NET` variable in the Snort configuration was updated to match the `172.16.14.0/24` subnet.
+
+### Screenshot
+
+03-snort-home-net-config.png
+
+show the line: ipvar HOME_NET 172.16.14.0/24
+
+### Installation
+
+Firstly, I executed the `sudo nano /etc/snort/snort.conf` command to open the Snort configuration file to edit it. From there, I changed `ipvar HOME_NET any` to `ipvar HOME_NET 172.16.14.0/24`. 
