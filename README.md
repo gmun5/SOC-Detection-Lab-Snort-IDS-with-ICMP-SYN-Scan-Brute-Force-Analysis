@@ -94,7 +94,7 @@ Ubuntu terminal showing ip a with interface and IP
 
 ### Verification
 
-I began by running `ip a` to display the IP addresses and status of all network interfaces on the Ubuntu server. From there, I identified the interface name `enp2s0`, Ubuntu IP address `172.16.14.129` and subnet `172.16.14.0/24`.
+I began by running `ip a` to display the IP addresses and status of all the network interfaces on the Ubuntu server. From there, I identified the interface name `enp2s0`, Ubuntu IP address `172.16.14.129` and subnet `172.16.14.0/24`.
 
 
 ## Step 4: Configure HOME_NET in Snort
