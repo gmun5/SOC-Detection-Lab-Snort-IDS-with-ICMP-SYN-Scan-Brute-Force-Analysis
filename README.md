@@ -3,7 +3,7 @@
 # Overview
 
 
-This Snort Intrusion Detection Lab was built with two isolated virtual machines: an Ubuntu VM running Snort, and a Windows VM used to generate network traffic. The lab was designed to simulate three realistic SOC-relevant scenarios: a benign ICMP baseline, a TCP SYN reconnaissance scan, and a SSH brute-force simulation.
+This Snort Intrusion Detection Lab was built with two isolated virtual machines: an Ubuntu VM running Snort, and a Windows VM used to generate network traffic. The lab was designed to simulate three realistic SOC-relevant scenarios: a benign ICMP baseline, a TCP SYN reconnaissance scan, and SSH brute-force behavior.
 
 The purpose of this lab was not just to "run Snort", but to practice the workflow a SOC analyst would actually follow. To simulate the workflow, I had to:
 - Establish a normal baseline
